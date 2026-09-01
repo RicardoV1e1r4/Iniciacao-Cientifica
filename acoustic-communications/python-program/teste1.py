@@ -9,11 +9,11 @@ import acousticChannel as ac
 
 setup = {
     "Ts": 0.001,
-    "paths": 6,
+    "paths": 8,
     "delayspread": 0.01}
 
 gain = {
-    "attenuation": 10}
+    "attenuation": 15}
 
 delay = {
     "mean": 0.003}
@@ -24,8 +24,8 @@ doppler = {
 
 h, delay_bar, gain_tap, Q, M = ac.acoustic_channel(setup, gain, delay, doppler)
 
-print("h =", h)
-print("delay_bar =", delay_bar)
-print("gain_tap =", gain_tap)
-print("Q =", Q)
-print("M =", M)
+print("\nh =", h)
+print("\ndelay_bar =", delay_bar)
+print("\ngain_tap =", gain_tap)
+print("\nQ =", Q)
+print("\nM =", M)

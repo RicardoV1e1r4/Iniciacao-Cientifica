@@ -32,3 +32,46 @@ def distanceVariation(x_start, x_end, delta_x, y_start, y_end, delta_y):
 	d_end = np.sqrt((x_end + delta_x - x_start) ** 2 + (y_end + delta_y - y_start) ** 2)
 	distance_variation = d_end - d_start
 	return d_start, d_end, distance_variation
+
+
+def taylorAmplitudeVariation(A0, g_minus, g_plus, time_grid, order=1, g_zero=None):
+	"""Calcula a variação temporal da amplitude A_p(t) de UM caminho por série de Taylor.
+
+	Baseado na eq. (1.19) de Zhou & Wang (2014), seção 1.3.4. O tempo é centrado
+	no meio do bloco (t em [-Tbl/2, +Tbl/2]) e a curva passa exatamente por
+	A0*g_minus no início, A0*g_zero no centro e A0*g_plus no fim do bloco.
+
+	Parâmetros:
+		A0        : ganho de referência do percurso (escala linear, ex.: da grande escala).
+		g_minus   : fator de ganho no início do bloco.
+		g_plus    : fator de ganho no fim do bloco.
+		time_grid : vetor de tempo dentro do bloco (ex.: np.linspace(0, Tbl, N)).
+		order     : ordem da expansão (1 = linear, 2 = parabólica).
+		g_zero    : fator de ganho no centro do bloco. Se None, usa a média de
+		            g_minus e g_plus (na ordem 2 isso anula a curvatura).
+
+	Retorno:
+		A_t : vetor com a amplitude variante no tempo A_p(t).
+	"""
+	time_grid = np.asarray(time_grid, dtype=float)
+	dt = time_grid[-1] - time_grid[0]
+	if dt == 0:
+		return np.full_like(time_grid, A0 * (g_zero if g_zero is not None else g_minus))
+
+	# Tempo centrado no meio do bloco
+	t_centered = time_grid - (time_grid[0] + dt / 2.0)
+
+	g0 = g_zero if g_zero is not None else (g_minus + g_plus) / 2.0
+
+	# Primeira derivada por diferença central (passo dt/2 para cada lado)
+	A1 = (g_plus - g_minus) / dt
+
+	if order == 1:
+		A2 = 0.0
+	elif order == 2:
+		# Segunda derivada por diferença central com passo h = dt/2: (g+ - 2g0 + g-)/h^2
+		A2 = (4.0 / dt**2) * (g_plus - 2.0 * g0 + g_minus)
+	else:
+		raise ValueError("A ordem deve ser 1 ou 2.")
+
+	return A0 * (g0 + A1 * t_centered + 0.5 * A2 * t_centered**2)

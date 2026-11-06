@@ -16,8 +16,8 @@ import underwaterFunctions as uwf
 f1 = 10         # Frequência da portadora em kHz
 L0 = 1          # Perda de referência (escala linear)
 Ks = 1.5        # Fator de espalhamento (1 = cilíndrico, 2 = esférico, 1.5 = prático)
-v_R = 7           # Velocidade do receptor em m/s
-v_T = 0           # Velocidade do transmissor em m/s
+v_R = 5           # Velocidade do receptor em m/s
+v_T = -2           # Velocidade do transmissor em m/s
 theta_R = 0       # Direção do receptor em graus (0 = +x, 90 = +y, 180 = -x)
 theta_T = 0       # Direção do transmissor em graus
 Tbl = 60        # Duração do bloco em s (exagerada para a curvatura ficar visível)
@@ -37,8 +37,8 @@ x_R0 = 0
 y_R0 = 0
 
 # Posição inicial do transmissor, em km (a final sai de v_T, theta_T e Tbl)
-x_T0 = 0.25
-y_T0 = 0
+x_T0 = 2
+y_T0 = 0.8
 
 # Parâmetros variáveis
 #------------------------------------------------
@@ -55,6 +55,7 @@ def distancia(t):
     x_T1 = x_T0 + v_Tx * t / 1000
     y_T1 = y_T0 + v_Ty * t / 1000
     return np.hypot(x_T1 - x_R1, y_T1 - y_R1)
+
 
 def amplitude(t):
     """Amplitude do caminho direto: inverso da raiz da perda de transmissão."""

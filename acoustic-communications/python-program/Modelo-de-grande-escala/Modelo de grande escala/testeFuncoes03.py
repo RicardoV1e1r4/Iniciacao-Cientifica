@@ -17,7 +17,7 @@ f1 = 10         # Frequência da portadora em kHz
 L0 = 1          # Perda de referência (escala linear)
 Ks = 1.5        # Fator de espalhamento (1 = cilíndrico, 2 = esférico, 1.5 = prático)
 v_R = 5           # Velocidade do receptor em m/s
-v_T = -2           # Velocidade do transmissor em m/s
+v_T = 0           # Velocidade do transmissor em m/s
 theta_R = 0       # Direção do receptor em graus (0 = +x, 90 = +y, 180 = -x)
 theta_T = 0       # Direção do transmissor em graus
 Tbl = 60        # Duração do bloco em s (exagerada para a curvatura ficar visível)
@@ -37,8 +37,8 @@ x_R0 = 0
 y_R0 = 0
 
 # Posição inicial do transmissor, em km (a final sai de v_T, theta_T e Tbl)
-x_T0 = 2
-y_T0 = 0.8
+x_T0 = 0.4
+y_T0 = 0.4
 
 # Parâmetros variáveis
 #------------------------------------------------
@@ -59,7 +59,9 @@ def distancia(t):
 
 def amplitude(t):
     """Amplitude do caminho direto: inverso da raiz da perda de transmissão."""
-    return 1 / np.sqrt(uwf.transmissionLoss(f1, distancia(t), L0, Ks))
+    dd = distancia(t) - distancia(0)  # Variação da distância em relação ao início do bloco
+    # return 1 / np.sqrt(uwf.transmissionLoss(f1, distancia(t), L0, Ks))
+    return 1 / np.sqrt(((1 + (dd / distancia(0))) ** Ks) * (10 ** (uwf.ThorpsFormula(f1) / 10 * dd)))
 
 
 A_exata = amplitude(tempo)

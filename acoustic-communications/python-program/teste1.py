@@ -10,7 +10,7 @@ import acousticChannel as ac
 
 setup = {
     "Ts": 0.001,
-    "paths": 8,
+    "paths": 12,
     "delayspread": 0.01}
 
 gain = {

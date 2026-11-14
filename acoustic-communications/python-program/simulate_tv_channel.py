@@ -69,7 +69,7 @@ for p in paths:
 
 plt.tight_layout(pad=2.0)
 
-#plt.show()
+plt.show()
 
 # Save to scratch
 scratch_path = 'D:/Documentos/GitHub/Cognitive-Radios/acoustic-communications/python-program/time_varying_impulse_response_3d.png'

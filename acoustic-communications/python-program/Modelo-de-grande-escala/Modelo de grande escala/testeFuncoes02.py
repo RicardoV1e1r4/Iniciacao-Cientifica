@@ -5,13 +5,13 @@ import underwaterFunctions as uwf
 
 # Parâmetros estaticos
 #-------------------------------------------------
-f1 = 10  # Frequência em kHz
-Ks = 1.5      # Fator de espalhamento (1 = cilíndrico, 2 = esférico, 1.5 = prático)
-v_R = 5           # Velocidade do receptor em m/s
-v_T = 0           # Velocidade do transmissor em m/s
-theta_R = 0       # Direção do receptor em graus (0 = +x, 90 = +y, 180 = -x)
-theta_T = 0       # Direção do transmissor em graus
-Tbl = 60            # Duração do bloco em s
+f1      = 10    # Frequência em kHz
+Ks      = 1.5   # Fator de espalhamento (1 = cilíndrico, 2 = esférico, 1.5 = prático)
+v_R     = 5     # Velocidade do receptor em m/s
+v_T     = 0     # Velocidade do transmissor em m/s
+theta_R = 0     # Direção do receptor em graus (0 = +x, 90 = +y, 180 = -x)
+theta_T = 0     # Direção do transmissor em graus
+Tbl     = 60    # Duração do bloco em s
 #------------------------------------------------
 
 # Componentes da velocidade do receptor, em m/s

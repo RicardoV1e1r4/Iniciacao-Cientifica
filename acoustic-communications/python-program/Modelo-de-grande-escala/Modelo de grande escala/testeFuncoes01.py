@@ -6,15 +6,15 @@ import underwaterFunctions as uwf
 # Parâmetros estaticos
 #-------------------------------------------------
 f1 = 10     # Frequência em kHz
-Ks = 2    # Coeficiente de absorção
+Ks = 2      # Coeficiente de absorção
 L0 = 1      # Perda de referência (escala linear)
 #------------------------------------------------
 
 # Vetores
 #------------------------------------------------
-f = np.array([ 0.1, 1, 2, 5, 10, 20, 50, 100 ])     # Frequências de 0.1 kHz a 100 kHz
-f_tl = np.array([ 0.1, 1, 5, 10, 20, 50, 100 ])     # Frequências de 0.1 kHz a 100 kHz
-d = np.arange(0.1, 100, 0.1)                        # Distâncias de 0.1 km a 100 km
+f       = np.array([ 0.1, 1, 2, 5, 10, 20, 50, 100 ])   # Frequências de 0.1 kHz a 100 kHz
+f_tl    = np.array([ 0.1, 1, 5, 10, 20, 50, 100 ])      # Frequências de 0.1 kHz a 100 kHz
+d       = np.arange(0.1, 100, 0.1)                      # Distâncias de 0.1 km a 100 km
 
 #------------------------------------------------
 

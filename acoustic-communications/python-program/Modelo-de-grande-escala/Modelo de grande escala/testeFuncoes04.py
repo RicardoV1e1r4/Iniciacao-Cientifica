@@ -10,7 +10,7 @@ f1      = 10    # Frequência em kHz
 L0      = 1     # Perda de referência (escala linear)
 Ks      = 2   # Fator de espalhamento (1 = cilíndrico, 2 = esférico, 1.5 = prático)
 v_R     = 10     # Velocidade do receptor em m/s
-v_T     = 0     # Velocidade do transmissor em m/s
+v_T     = 2     # Velocidade do transmissor em m/s
 theta_R = 0     # Direção do receptor em graus (0 = +x, 90 = +y, 180 = -x)
 theta_T = 0     # Direção do transmissor em graus
 #------------------------------------------------
@@ -28,8 +28,8 @@ x_R0 = 0
 y_R0 = 0
 
 # Posição inicial do transmissor, em km (as seguintes saem de v_T, theta_T e tempo)
-x_T0 = 0.2
-y_T0 = 0.5
+x_T0 = 6.7
+y_T0 = 1.8
 
 # Vetores
 #------------------------------------------------
@@ -43,7 +43,7 @@ D, T = np.meshgrid(d, t_surf, indexing='ij')  # Malha (linhas = distância, colu
 
 # PERDA DE TRANSMISSÃO (dB)
 #------------------------------------------------
-def transmissionLoss_dB(f, d_km):
+def transmissionLoss_dB(f, d_km, L0, Ks):
     """TL em dB: 10*log10(L0) + Ks*10*log10(d) + alpha*d.
 
     Equivale a 10*log10(uwf.transmissionLoss(f, d, L0, Ks)), mas evita overflow
@@ -62,12 +62,15 @@ def distancia(t):
 
 
 # Superfície: TL em função da distância, repetida ao longo do tempo
-TL_surf = transmissionLoss_dB(f1, D)
-TL_surf_recortado = np.ma.masked_outside(TL_surf, 40, 130)
+TL_surf = transmissionLoss_dB(f1, D, L0, Ks)
+
+upper_limit = 130
+lower_limit = 40
+TL_surf_recortado = np.ma.masked_outside(TL_surf, lower_limit, upper_limit)
 
 # Trajetória: distância real entre transmissor e receptor ao longo do tempo
 d_t  = distancia(tempo)
-TL_t = transmissionLoss_dB(f1, d_t)
+TL_t = transmissionLoss_dB(f1, d_t, L0, Ks)
 
 # Propagação da frente de onda (pulso emitido em t = 0)
 # Após t_p segundos, a frente de onda está em r = c*t_p e acumulou TL(r).
@@ -77,7 +80,7 @@ d0   = distancia(0)                           # Distância do enlace no instante
 tau  = d0 * 1000 / c                          # Tempo de propagação até o receptor, em s
 t_p  = np.linspace(1 / c, tau, 500)           # Tempo de propagação de 1 m até o receptor
 r_p  = c * t_p / 1000                         # Posição da frente de onda em km
-TL_p = transmissionLoss_dB(f1, r_p)
+TL_p = transmissionLoss_dB(f1, r_p, L0, Ks)
 
 
 # ESCALA LOGARÍTMICA

@@ -93,7 +93,7 @@ Iniciacao-Cientifica/
 │   ├── matlab-program/          # Canal UWA em MATLAB
 │   └── python-program/
 │       ├── Acoustic Channel-Taylor/
-│       ├── Modelo-de-grande-escala/
+│       ├── modelo-grande-escala/
 │       ├── acousticChannel.py   # Canal UWA em Python
 │       └── simulate_tv_channel.py
 └── experiments/
@@ -123,5 +123,5 @@ Para abrir os fluxogramas, use o **GNU Radio Companion** e carregue os arquivos 
 
 1. S. Zhou e Z. Wang, *OFDM for Underwater Acoustic Communications*. Chichester: John Wiley & Sons, 2014.
 2. R. S. Chaves, *Modelagem e Simulação de Sistemas de Comunicação Acústica Submarina*, Projeto de Graduação, Universidade Federal do Rio de Janeiro, 2016.
-3. X. Lurton, *An Introduction to Underwater Acoustics: Principles and Applications*. [EDITORA], [ANO].
+3. X. Lurton, *An Introduction to Underwater Acoustics: Principles and Applications*. Springer, 2004.
 

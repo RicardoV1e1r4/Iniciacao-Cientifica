@@ -13,10 +13,10 @@ def ThorpsFormula(f):
 	)
 
 
-def conventionalPropagationLoss(f, d):
+def conventionalPropagationLoss(f, d, Ks=2):
 	"""Calcula a perda de propagação convencional em dB para a frequência f em kHz e distância d em km."""
 	alpha = ThorpsFormula(f)
-	return 20 * np.log10(d * 1000) + (alpha * d)
+	return Ks * 10 * np.log10(d * 1000) + (alpha * d)
 
 
 def transmissionLoss(f, d, L0 = 1, Ks = 1):

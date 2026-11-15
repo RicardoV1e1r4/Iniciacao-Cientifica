@@ -13,7 +13,7 @@ L0 = 1      # Perda de referência (escala linear)
 # Parâmetros variáveis (espaçamento logarítmico, como nos eixos do testeFuncoes01)
 #------------------------------------------------
 f       = np.logspace(np.log10(0.1), np.log10(100), 120)    # Frequências de 0.1 kHz a 100 kHz
-f_tl    = np.logspace(np.log10(0.1), np.log10(70), 8)       # Frequências de teste para perda de transmissão
+f_tl    = np.logspace(np.log10(0.1), np.log10(100), 8)      # Frequências de teste para perda de transmissão
 d       = np.logspace(np.log10(0.1), np.log10(100), 120)    # Distâncias de 0.1 km a 100 km
 #------------------------------------------------
 

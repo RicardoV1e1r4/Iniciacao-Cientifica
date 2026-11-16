@@ -28,12 +28,8 @@ PL_recortado = np.where((PL >= 40) & (PL <= 130), PL, np.nan)
 
 # PERDA DE TRANSMISSÃO (dB)
 #------------------------------------------------
-# Calculada diretamente em dB: 10*log10(L0) + Ks*10*log10(d) + alpha*d.
-# Equivale a 10*log10(uwf.transmissionLoss(...)), mas evita overflow do valor
-# linear em frequências e distâncias altas (ex.: 100 kHz a 100 km -> ~10^350).
-# TL = L0 * ((d * 1000) ** Ks) * (10**((alpha / 10) * d))
-
-TL = 10 * np.log10(L0) + Ks * 10 * np.log10(D * 1000) + uwf.ThorpsFormula(F) * D
+# Calculada em dB dentro da função (evita overflow do valor linear).
+TL = uwf.transmissionLoss(F, D, L0, Ks)
 
 # TL1 = uwf.conventionalPropagationLoss(f_tl, d)
 

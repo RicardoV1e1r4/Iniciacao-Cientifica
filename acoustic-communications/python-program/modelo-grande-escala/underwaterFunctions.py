@@ -14,16 +14,38 @@ def ThorpsFormula(f):
 
 
 def conventionalPropagationLoss(f, d, Ks=2):
-	"""Calcula a perda de propagação convencional em dB para a frequência f em kHz e distância d em km."""
+	"""Calcula a perda de propagação convencional em dB para a frequência f em kHz e distância d em km.
+
+	Aceita escalares ou arrays (inclusive malhas de np.meshgrid). O cálculo é feito
+	diretamente em dB, sem passar pela escala linear, portanto não há overflow.
+	"""
+	f = np.asarray(f, dtype=float)
+	d = np.asarray(d, dtype=float)
 	alpha = ThorpsFormula(f)
-	return Ks * 10 * np.log10(d * 1000) + (alpha * d)
+	return Ks * 10 * np.log10(d * 1000) + alpha * d
 
 
-def transmissionLoss(f, d, L0 = 1, Ks = 1):
-	"""Calcula a perda de transmissão em dB para a frequência f em kHz e distância d em km."""
+def transmissionLoss(f, d, L0=1, Ks=2, dB=True):
+	"""Calcula a perda de transmissão para a frequência f em kHz e distância d em km.
+
+	Modelo: TL = L0 * (d*1000)**Ks * 10**(alpha*d/10)
+
+	O cálculo é feito em dB, evitando o overflow do valor linear em frequências e
+	distâncias altas (ex.: 100 kHz a 100 km -> ~10^350):
+		TL_dB = 10*log10(L0) + Ks*10*log10(d*1000) + alpha*d
+
+	Parâmetros:
+		dB : se True (padrão), retorna a perda em dB. Se False, retorna a perda em
+		     escala linear (valores que excedem o limite do float viram inf).
+	"""
+	f = np.asarray(f, dtype=float)
+	d = np.asarray(d, dtype=float)
 	alpha = ThorpsFormula(f)
-	TL = L0 * ((d * 1000) ** Ks) * (10**((alpha / 10) * d))
-	return TL
+	TL_dB = 10 * np.log10(L0) + Ks * 10 * np.log10(d * 1000) + alpha * d
+	if dB:
+		return TL_dB
+	with np.errstate(over='ignore'):
+		return 10 ** (TL_dB / 10)
 
 
 

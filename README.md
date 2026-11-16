@@ -72,7 +72,7 @@ A teoria de AM (índice de modulação, sobremodulação, condição f_c ≫ W) 
 ### Perda de propagação em função da frequência
 
 <p align="center">
-  <img src="acoustic-communications/python-program/Modelo-de-grande-escala/Modelo%20de%20grande%20escala/Figure_1.png" width="90%" alt="Perda de propagação convencional para frequências de 0,1 a 100 kHz" />
+  <img src="acoustic-communications/python-program/modelo-grande-escala/perda-de-transmissao.png" width="90%" alt="Perda de propagação convencional para frequências de 0,1 a 100 kHz" />
 </p>
 
 Perda de propagação de 100 m a 100 km para frequências de 0,1 a 100 kHz, usando a fórmula de Thorp. Em 100 kHz, a perda passa de 100 dB antes de 2 km. Em 0,1 e 1 kHz, ela fica perto de 100 dB mesmo a 100 km. Por isso a comunicação acústica subaquática de longo alcance usa **frequências baixas**, de poucos kHz.

@@ -90,3 +90,98 @@ def taylorAmplitudeVariation(A0, g_minus, g_plus, time_grid, order=1, g_zero=Non
 		raise ValueError("A ordem deve ser 1 ou 2.")
 
 	return A0 * (g0 + A1 * t_centered + 0.5 * A2 * t_centered**2)
+
+
+def chebyshevPoints(M, Tbl, t_start=0.0, lobatto=False):
+	"""Retorna M instantes de amostragem de Chebyshev dentro do bloco [t_start, t_start + Tbl].
+
+	Os pontos ficam mais concentrados perto das bordas do bloco, o que evita as
+	oscilações do fenômeno de Runge em polinômios de ordem alta.
+
+	Parâmetros:
+		M       : número de pontos (para uma série de ordem N, use M = N + 1).
+		Tbl     : duração do bloco em s.
+		t_start : instante inicial do bloco em s.
+		lobatto : se False, usa os pontos de Chebyshev clássicos
+		          x_k = cos((2k - 1)*pi / (2M)), k = 1..M, que não incluem as bordas.
+		          Se True, usa os pontos de Chebyshev-Lobatto x_k = cos(k*pi / (M - 1)),
+		          k = 0..M-1, que incluem o início e o fim do bloco.
+
+	Retorno:
+		t_k : vetor com os M instantes, em ordem crescente.
+	"""
+	if M < 1:
+		raise ValueError("M deve ser pelo menos 1.")
+	if lobatto:
+		if M < 2:
+			raise ValueError("Os pontos de Chebyshev-Lobatto exigem M >= 2.")
+		x_k = np.cos(np.arange(M) * np.pi / (M - 1))
+	else:
+		k = np.arange(1, M + 1)
+		x_k = np.cos((2 * k - 1) * np.pi / (2 * M))
+	# Converte de [-1, 1] para o bloco [t_start, t_start + Tbl]
+	return np.sort(t_start + (x_k + 1) * Tbl / 2)
+
+
+def taylorAmplitude(A0, gains, t_samples, time_grid, order=None, return_derivatives=False):
+	"""Calcula a amplitude A_p(t) de UM caminho por série de Taylor de ordem qualquer.
+
+	Generaliza a eq. (1.19) de Zhou & Wang (2014), seção 1.3.4:
+		A_p(t) = sum_{n=0}^{N} A_p^(n) t^n / n!
+	com t medido a partir do centro do bloco. As derivadas A_p^(n) são obtidas
+	ajustando um polinômio de grau N aos ganhos medidos nos instantes t_samples.
+	Com N + 1 ganhos, o polinômio passa exatamente por todos eles. Com mais
+	ganhos, o ajuste é feito por mínimos quadrados.
+
+	Internamente o tempo é normalizado para u em [-1, 1], o que evita a perda de
+	precisão de potências altas como t^8.
+
+	Parâmetros:
+		A0                 : amplitude de referência do percurso (escala linear).
+		gains              : ganhos relativos g_k = A(t_k) / A0 nos instantes t_samples.
+		t_samples          : instantes, em s, em que os ganhos foram medidos.
+		time_grid          : vetor de tempo do bloco onde a amplitude é calculada.
+		                     O bloco vai de time_grid[0] a time_grid[-1].
+		order              : ordem N da série. Se None, usa N = len(gains) - 1.
+		return_derivatives : se True, também retorna as derivadas A_p^(n) no centro do bloco.
+
+	Retorno:
+		A_t         : vetor com a amplitude variante no tempo A_p(t).
+		derivatives : (só se return_derivatives=True) vetor com A_p^(0), A_p^(1), ..., A_p^(N),
+		              em unidades de amplitude por s^n.
+	"""
+	gains = np.asarray(gains, dtype=float)
+	t_samples = np.asarray(t_samples, dtype=float)
+	time_grid = np.asarray(time_grid, dtype=float)
+
+	if gains.shape != t_samples.shape or gains.ndim != 1:
+		raise ValueError("gains e t_samples devem ser vetores com o mesmo tamanho.")
+	if order is None:
+		order = len(gains) - 1
+	if order < 0:
+		raise ValueError("A ordem deve ser 0 ou maior.")
+	if len(gains) < order + 1:
+		raise ValueError(f"A ordem {order} exige pelo menos {order + 1} ganhos; foram dados {len(gains)}.")
+
+	# Centro e meia-duração do bloco
+	t_center = (time_grid[0] + time_grid[-1]) / 2.0
+	half = (time_grid[-1] - time_grid[0]) / 2.0
+	if half == 0:
+		half = 1.0
+
+	# Tempo normalizado: u = -1 no início do bloco e u = +1 no fim
+	u_samples = (t_samples - t_center) / half
+	u_grid = (time_grid - t_center) / half
+
+	# Coeficientes c_n do polinômio sum c_n u^n (do grau 0 ao grau N)
+	c = np.polynomial.polynomial.polyfit(u_samples, gains, order)
+	A_t = A0 * np.polynomial.polynomial.polyval(u_grid, c)
+
+	if not return_derivatives:
+		return A_t
+
+	# Derivadas no centro do bloco: A^(n) = A0 * n! * c_n / half^n
+	n = np.arange(order + 1)
+	factorials = np.array([np.prod(np.arange(1, k + 1), dtype=float) for k in n])
+	derivatives = A0 * factorials * c / half**n
+	return A_t, derivatives

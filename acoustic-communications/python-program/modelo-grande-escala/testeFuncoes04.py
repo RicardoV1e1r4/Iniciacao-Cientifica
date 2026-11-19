@@ -9,11 +9,11 @@ import underwaterFunctions as uwf
 f1      = 10    # Frequência em kHz
 L0      = 1     # Perda de referência (escala linear)
 Ks      = 2     # Fator de espalhamento (1 = cilíndrico, 2 = esférico, 1.5 = prático)
-v_R     = 10     # Velocidade do receptor em m/s
+v_R     = 0     # Velocidade do receptor em m/s
 v_T     = 0     # Velocidade do transmissor em m/s
 theta_R = 0     # Direção do receptor em graus (0 = +x, 90 = +y, 180 = -x)
 theta_T = 0     # Direção do transmissor em graus
-T_max   = 10    # Tempo máximo da simulação em segundos
+Tbl   = 10    # Tempo máximo da simulação em segundos
 #------------------------------------------------
 
 # Componentes da velocidade do receptor, em m/s
@@ -35,7 +35,7 @@ y_T0 = 1.8
 # Vetores
 #------------------------------------------------
 d       = np.logspace(np.log10(0.1), np.log10(100), 120)   # Distâncias de 0.1 km a 100 km (malha da superfície)
-tempo   = np.arange(0, T_max, 0.1)                            # Tempo de 0 a 60 segundos (trajetória)
+tempo   = np.arange(0, Tbl, 0.1)                            # Tempo de 0 a 60 segundos (trajetória)
 t_surf  = np.linspace(tempo[0], tempo[-1], 60)             # Tempo mais esparso para a superfície
 #------------------------------------------------
 
@@ -51,6 +51,7 @@ def transmissionLoss_dB(f, d_km, L0, Ks):
     do valor linear em distâncias grandes.
     """
     return 10 * np.log10(L0) + Ks * 10 * np.log10(d_km * 1000) + uwf.ThorpsFormula(f) * d_km
+    # return uwf.transmissionLoss(f, d_km, L0, Ks, dB=True)
 
 
 def distancia(t):
